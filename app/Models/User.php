@@ -3,20 +3,37 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Spatie\Permission\Traits\HasPermissions;
+use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Models\Role;
+
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
+    use HasRoles;
     use TwoFactorAuthenticatable;
+    use SoftDeletes;
+    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +43,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'is_admin',
         'password',
     ];
 
@@ -48,6 +66,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -58,4 +77,17 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasAnyRole('super-admin', 'admin','cos', 'hsd', 'engineer', 'user');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'is_admin',])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 }
