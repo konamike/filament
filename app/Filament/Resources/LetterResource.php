@@ -19,7 +19,7 @@ use Filament\Forms\Components\Tabs;
 class LetterResource extends Resource
 {
     protected static ?string $model = Letter::class;
-
+    protected static ?string $navigationIcon = 'heroicon-s-envelope';
     protected static ?string $navigationGroup = 'All Documents';
     protected static ?string $navigationLabel = 'Letter In';
     protected static ?int $navigationSort = 2;

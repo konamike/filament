@@ -17,7 +17,7 @@ class FiletreatResource extends Resource
 {
     protected static ?string $model = Filetreat::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-film';
+    protected static ?string $navigationIcon = 'heroicon-s-film';
     protected static ?string $navigationGroup = 'Documents Under Review';
     protected static ?string $navigationLabel = 'Files';
     protected static ?int $navigationSort = 1;
@@ -42,8 +42,8 @@ class FiletreatResource extends Resource
             ->schema([
                 Forms\Components\Textarea::make('description')
                     ->readOnly()
+                    ->disabled(true)
                     ->columnSpanFull(),
-
                 Forms\Components\Toggle::make('treated')
                     ->label('Treated?')
                     ->offIcon('heroicon-m-no-symbol')
@@ -68,12 +68,13 @@ class FiletreatResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable()
-                    ->wrap(),
                 Tables\Columns\TextColumn::make('date_received')
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->searchable()
+                    ->wrap(),
+
                 Tables\Columns\TextColumn::make('doc_author')
                     ->numeric()
                     ->sortable(),

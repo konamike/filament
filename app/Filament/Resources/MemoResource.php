@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MemoResource extends Resource
 {
     protected static ?string $model = Memo::class;
-
+    protected static ?string $navigationIcon = 'heroicon-s-chevron-double-down';
     protected static ?string $navigationGroup = 'All Documents';
     protected static ?string $navigationLabel = 'Memo In';
     protected static ?int $navigationSort = 3;

@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
             ->breadcrumbs(false)
             ->colors([
                 'primary' => Color::Teal,
@@ -50,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
+                Widgets\StatsOverviewWidget::class,
             ])
             ->userMenuItems([
                         'logout' => MenuItem::make()->label('Log out'),

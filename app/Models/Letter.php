@@ -25,7 +25,7 @@ class Letter extends Model
         'treated',
         'date_treated',
         'treated_by',
-        'treated_notes',
+        'treated_note',
         'remarks',
         'user_id',
         'sent_from',
@@ -34,7 +34,7 @@ class Letter extends Model
         'dispatch_phone',
         'dispatch_email',
         'dispatched_by',
-        'dispatch_notes',
+        'dispatch_note',
         'dispatched',
     ];
 

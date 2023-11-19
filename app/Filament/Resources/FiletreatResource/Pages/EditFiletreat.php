@@ -11,7 +11,7 @@ class EditFiletreat extends EditRecord
 {
     protected static string $resource = FiletreatResource::class;
 
-    protected static ?string $title = 'File Under Process';
+    protected static ?string $title = 'File Processing';
     protected static bool $canCreateAnother = false;
 
     protected function mutateFormDataBeforeSave(array $data): array

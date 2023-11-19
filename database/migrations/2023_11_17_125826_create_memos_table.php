@@ -28,7 +28,7 @@ return new class extends Migration
             $table->boolean('treated')->default(false); // File treated by Engineer?
             $table->date('date_treated')->nullable(); // Date file treated by Engineer
             $table->unsignedBigInteger('treated_by')->nullable();// Engineer who treated the file
-            $table->text('treated_notes')->nullable();
+            $table->text('treated_note')->nullable();
             $table->text('remarks')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->date('date_dispatched')->nullable();

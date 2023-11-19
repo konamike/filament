@@ -23,7 +23,7 @@ class FileResource extends Resource
 {
     protected static ?string $model = File::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-film';
+    protected static ?string $navigationIcon = 'heroicon-s-film';
     protected static ?string $navigationGroup = 'All Documents';
     protected static ?string $navigationLabel = 'Files In';
     protected static ?int $navigationSort = 1;
