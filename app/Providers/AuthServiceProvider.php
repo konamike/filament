@@ -3,20 +3,28 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\Allfile;
 use App\Models\Category;
 use App\Models\Contractor;
 use App\Models\File;
+use App\Models\Filedispatch;
 use App\Models\Filetreat;
 use App\Models\Letter;
+use App\Models\Letterdispatch;
 use App\Models\Lettertreat;
 use App\Models\Memo;
+use App\Models\Memodispatch;
 use App\Models\Memotreat;
+use App\Policies\AllfilePolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\ContractorPolicy;
+use App\Policies\FiledispatchPolicy;
 use App\Policies\FilePolicy;
 use App\Policies\FiletreatPolicy;
+use App\Policies\LetterdispatchPolicy;
 use App\Policies\LetterPolicy;
 use App\Policies\LettertreatPolicy;
+use App\Policies\MemodispatchPolicy;
 use App\Policies\MemoPolicy;
 use App\Policies\MemotreatPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -38,7 +46,11 @@ class AuthServiceProvider extends ServiceProvider
         Filetreat::class => FiletreatPolicy::class,
         Lettertreat::class => LettertreatPolicy::class,
         Memotreat::class => MemotreatPolicy::class,
-//        Contractor::class => ContractorPolicy::class,
+        Filedispatch::class =>  FiledispatchPolicy::class,
+        Letterdispatch::class => LetterdispatchPolicy::class,
+        Memodispatch::class => MemodispatchPolicy::class,
+        Allfile::class => AllfilePolicy::class,
+
     ];
 
     /**

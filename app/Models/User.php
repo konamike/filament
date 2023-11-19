@@ -80,7 +80,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasAnyRole('super-admin', 'admin','cos', 'hsd', 'engineer', 'user');
+        return $this->hasAnyRole('super-admin', 'admin', 'md','cos', 'hsd', 'engineer', 'user');
     }
 
     public function getActivitylogOptions(): LogOptions

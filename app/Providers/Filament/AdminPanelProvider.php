@@ -49,9 +49,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+//                Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
-                Widgets\StatsOverviewWidget::class,
+//                Widgets\StatsOverviewWidget::class,
             ])
             ->userMenuItems([
                         'logout' => MenuItem::make()->label('Log out'),
@@ -61,6 +61,7 @@ class AdminPanelProvider extends PanelProvider
                 'Admin Management',
                 'General Management',
                 'All Documents',
+                'Incoming Documents',
                 'Documents Under Review',
                 'Document for Dispatch'
             ])

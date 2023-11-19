@@ -21,8 +21,8 @@ class MemoResource extends Resource
 {
     protected static ?string $model = Memo::class;
     protected static ?string $navigationIcon = 'heroicon-s-chevron-double-down';
-    protected static ?string $navigationGroup = 'All Documents';
-    protected static ?string $navigationLabel = 'Memo In';
+    protected static ?string $navigationGroup = 'Incoming Documents';
+    protected static ?string $navigationLabel = 'Memo';
     protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string

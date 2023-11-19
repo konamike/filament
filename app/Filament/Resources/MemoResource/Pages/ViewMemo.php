@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewMemo extends ViewRecord
 {
     protected static string $resource = MemoResource::class;
+    protected static ?string $title = 'Details';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+//            Actions\EditAction::make(),
         ];
     }
 }

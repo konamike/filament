@@ -24,8 +24,8 @@ class FileResource extends Resource
     protected static ?string $model = File::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-film';
-    protected static ?string $navigationGroup = 'All Documents';
-    protected static ?string $navigationLabel = 'Files In';
+    protected static ?string $navigationGroup = 'Incoming Documents';
+    protected static ?string $navigationLabel = 'Files';
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string
