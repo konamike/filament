@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewFiledispatch extends ViewRecord
 {
     protected static string $resource = FiledispatchResource::class;
+    protected static ?string $title = 'View File';
 
     protected function getHeaderActions(): array
     {

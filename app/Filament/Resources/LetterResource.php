@@ -53,7 +53,7 @@ class LetterResource extends Resource
                             Forms\Components\Select::make('category_id')
                                 ->label('Category')
                                 ->searchable()
-                                ->options(Category::where('document_type', 'LETTER')->pluck('name', 'id')->toArray())
+                                ->options(Category::where('document_type', 'LETTER')->pluck('name', 'id'))
                                 ->preload()
                                 ->label('Document Category')
                                 ->reactive(),
@@ -96,7 +96,8 @@ class LetterResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('retrieved_by')
                                     ->maxLength(255),
-                                Forms\Components\DatePicker::make('date_retrieved'),
+                                Forms\Components\DatePicker::make('date_retrieved')
+                                ->native(false),
                                 Forms\Components\Toggle::make('treated')
                                     ->offIcon('heroicon-m-no-symbol')
                                     ->offColor('danger')
@@ -116,7 +117,8 @@ class LetterResource extends Resource
                         Tabs\Tab::make('Document Dispatch')
                             ->icon('heroicon-s-bell')
                             ->schema([
-                                Forms\Components\DatePicker::make('date_dispatched'),
+                                Forms\Components\DatePicker::make('date_dispatched')
+                                ->native(false),
                                 Forms\Components\TextInput::make('sent_from')
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('sent_to')

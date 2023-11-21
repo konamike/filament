@@ -15,6 +15,7 @@ use App\Models\Lettertreat;
 use App\Models\Memo;
 use App\Models\Memodispatch;
 use App\Models\Memotreat;
+use App\Policies\ActivityPolicy;
 use App\Policies\AllfilePolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\ContractorPolicy;
@@ -27,8 +28,13 @@ use App\Policies\LettertreatPolicy;
 use App\Policies\MemodispatchPolicy;
 use App\Policies\MemoPolicy;
 use App\Policies\MemotreatPolicy;
+use App\Policies\PermissionPolicy;
+use App\Policies\RolePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -50,6 +56,9 @@ class AuthServiceProvider extends ServiceProvider
         Letterdispatch::class => LetterdispatchPolicy::class,
         Memodispatch::class => MemodispatchPolicy::class,
         Allfile::class => AllfilePolicy::class,
+        Permission::class => PermissionPolicy::class,
+        Role::class => RolePolicy::class,
+        Activity::class => ActivityPolicy::class,
 
     ];
 

@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -45,25 +46,26 @@ class FileResource extends Resource
 
                 Forms\Components\FieldSet::make('Primary Details')
                     ->schema(components: [
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\Textarea::make('Description')
+                            ->autofocus()
                             ->required()
                             ->maxLength(65535)
                             ->label('File Description')
                             ->columnSpanFull(),
-
-
                         Forms\Components\Select::make('category_id')
                             ->label('Category')
-                            ->options(Category::where('document_type', 'FILE')->pluck('name', 'id')->toArray())
+                            ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
                             ->preload()
-                            ->label('Document Category')
-                            ->reactive(),
+                            ->searchable()
+                            ->native(false)
+                            ->label('Document Category'),
+//                            ->reactive(),
 //                            ->afterStateUpdated(fn (Callable $set) => $set ('category_name', 'name')),
 //                        TextInput::make('category_name')
 //                            ->password()
 //                            ->hidden(fn (Closure $get) => $get('category_id')),
                         Forms\Components\Hidden::make('category_name')
-                        ->default('category.name'),
+                            ->default('category.name'),
 
 
                         Forms\Components\Select::make('contractor_id')
@@ -87,33 +89,33 @@ class FileResource extends Resource
                             ->required(),
                     ])->columns(3),
 
-                    Forms\Components\Fieldset::make('Other Details')
-                        ->schema([
-                            Forms\Components\TextInput::make('doc_author')
-                                ->label('Document Author')
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('doc_sender')
-                                ->label('Document Sender')
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('email')
-                                ->email(),
-                            Forms\Components\Textarea::make('remarks')
-                                ->maxLength(65535)
-                                ->columnSpanFull(),
-                                    ])->columns(3),
+                Forms\Components\Fieldset::make('Other Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('doc_author')
+                            ->label('Document Author')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('doc_sender')
+                            ->label('Document Sender')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email(),
+                        Forms\Components\Textarea::make('remarks')
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
+                    ])->columns(3),
                 Forms\Components\Fieldset::make('Document Retrievals')
-                        ->schema([
-                            Forms\Components\TextInput::make('hand_carried')
-                                ->maxLength(255),
+                    ->schema([
+                        Forms\Components\TextInput::make('hand_carried')
+                            ->maxLength(255),
 //                                ->visibleOn(['view', 'edit']),
-                            Forms\Components\TextInput::make('retrieved_by')
-                                ->maxLength(255),
+                        Forms\Components\TextInput::make('retrieved_by')
+                            ->maxLength(255),
 //                                ->visibleOn(['view', 'edit']),
-                            Forms\Components\DatePicker::make('date_retrieved')
-                                ->native(false),
+                        Forms\Components\DatePicker::make('date_retrieved')
+                            ->native(false),
 //                                ->visibleOn(['view', 'edit']),
-                        ])->visibleOn(['view', 'edit'])
-                          ->columns(3),
+                    ])->visibleOn(['view', 'edit'])
+                    ->columns(3),
             ]);
     }
 
@@ -151,7 +153,9 @@ class FileResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->query(fn(Builder $query): Builder => $query->where('treated', false)
+                    ),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

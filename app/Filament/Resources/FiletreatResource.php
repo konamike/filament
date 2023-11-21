@@ -54,7 +54,7 @@ class FiletreatResource extends Resource
                 Forms\Components\DatePicker::make('date_treated')
                     ->native(false)
                     ->required(),
-                Forms\Components\Textarea::make('treated_note')
+                Forms\Components\Textarea::make('treated_notes')
                     ->label('Note for MD/CEO')
                     ->maxLength(65535)
                     ->columnSpanFull(),
@@ -89,7 +89,9 @@ class FiletreatResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label('Process')
+                ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

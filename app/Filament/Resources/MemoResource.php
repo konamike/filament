@@ -97,7 +97,8 @@ class MemoResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('retrieved_by')
                                     ->maxLength(255),
-                                Forms\Components\DatePicker::make('date_retrieved'),
+                                Forms\Components\DatePicker::make('date_retrieved')
+                                ->native(false),
                                 Forms\Components\Toggle::make('treated')
                                     ->offIcon('heroicon-m-no-symbol')
                                     ->offColor('danger')
@@ -110,7 +111,8 @@ class MemoResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('treated_by')
                                     ->numeric(),
-                                Forms\Components\DatePicker::make('date_treated'),
+                                Forms\Components\DatePicker::make('date_treated')
+                                ->native(false),
 //                                Forms\Components\Textarea::make('treated_notes')
 //                                    ->maxLength(65535)
 //                                    ->columnSpan(2),
@@ -119,7 +121,8 @@ class MemoResource extends Resource
                         Tabs\Tab::make('Document Dispatch')
                             ->icon('heroicon-s-bell')
                             ->schema([
-                                Forms\Components\DatePicker::make('date_dispatched'),
+                                Forms\Components\DatePicker::make('date_dispatched')
+                                ->native(false),
                                 Forms\Components\TextInput::make('sent_from')
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('sent_to')

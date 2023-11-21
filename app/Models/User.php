@@ -22,8 +22,6 @@ use Spatie\Permission\Traits\HasPermissions;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Permission\Models\Role;
-
 class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens;

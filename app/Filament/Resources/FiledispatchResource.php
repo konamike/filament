@@ -18,7 +18,7 @@ class FiledispatchResource extends Resource
     protected static ?string $model = Filedispatch::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-film';
-    protected static ?string $navigationGroup = 'Documents For Dispatch';
+    protected static ?string $navigationGroup = 'Awaiting MD Signature';
     protected static ?string $navigationLabel = 'Files';
     protected static ?int $navigationSort = 1;
 
@@ -53,9 +53,11 @@ class FiledispatchResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('sent_from')
                             ->default('MD/CEO')
+                            ->label('Sent From')
                             ->placeholder('MD/CEO')
                             ->maxLength(30),
                         Forms\Components\TextInput::make('sent_to')
+                            ->label('Sent To')
                             ->maxLength(255),
                         Forms\Components\Toggle::make('dispatched')
                             ->label('Ready for Dispatch?')
@@ -65,16 +67,21 @@ class FiledispatchResource extends Resource
                             ->inline(false)
                             ->required(),
                         Forms\Components\DatePicker::make('date_dispatched')
+                            ->label('Dispatched Date')
                             ->required()
                             ->native(false),
                         Forms\Components\TextInput::make('dispatch_phone')
+                            ->label('Dispatch Phone')
                             ->minLength(11)
                             ->maxLength(11)
                             ->required(),
                         Forms\Components\TextInput::make('dispatch_email')
+                            ->label('Dispatch Email')
+                            ->helperText('Email to be used to deliver the dispatch message.')
                             ->email()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('dispatched_by')
+                            ->label('Dispatched By/Hand Carried')
                             ->maxLength(255),
                         Forms\Components\Textarea::make('dispatch_note')
                             ->maxLength(65535)
@@ -93,23 +100,20 @@ class FiledispatchResource extends Resource
                     ->searchable()
                     ->wrap(),
                 Tables\Columns\TextColumn::make('contractor.name')
-                    ->label('Contractor/Internal')
+                    ->wrap()
+                    ->label('Mail Initiator')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
-                    ->sortable(),
+//                Tables\Columns\TextColumn::make('amount')
+//                    ->numeric()
+//                    ->sortable(),
                 Tables\Columns\IconColumn::make('treated')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('dispatched')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('date_treated')
                     ->date()
-                    ->sortable(),
+                    ->label('Date Treated'),
+                Tables\Columns\IconColumn::make('dispatched')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -118,8 +122,10 @@ class FiledispatchResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Process')
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -142,7 +148,7 @@ class FiledispatchResource extends Resource
     {
         return [
             'index' => Pages\ListFiledispatches::route('/'),
-            'create' => Pages\CreateFiledispatch::route('/create'),
+//            'create' => Pages\CreateFiledispatch::route('/create'),
             'view' => Pages\ViewFiledispatch::route('/{record}'),
             'edit' => Pages\EditFiledispatch::route('/{record}/edit'),
         ];

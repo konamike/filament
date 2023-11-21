@@ -32,6 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile()
             ->breadcrumbs(false)
+            ->databaseNotifications(true)
+            ->maxContentWidth('full')
             ->colors([
                 'primary' => Color::Teal,
                 'danger' => Color::Rose,
@@ -63,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
                 'All Documents',
                 'Incoming Documents',
                 'Documents Under Review',
-                'Document for Dispatch'
+                'Awaiting MD Signature'
             ])
              ->middleware([
                     EncryptCookies::class,
