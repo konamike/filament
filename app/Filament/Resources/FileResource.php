@@ -153,9 +153,9 @@ class FileResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->query(fn(Builder $query): Builder => $query->where('treated', false)
-                    ),
+                Tables\Actions\ViewAction::make(),
+//                    ->query(fn(Builder $query): Builder => $query->where('treated', false)
+//                    )
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
