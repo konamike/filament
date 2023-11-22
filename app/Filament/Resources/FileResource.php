@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class FileResource extends Resource
 {
@@ -127,8 +128,7 @@ class FileResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->searchable()
                     ->label('Description')
-                    ->wrap()
-                    ->sortable(),
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('date_received')
                     ->date(),
                 Tables\Columns\TextColumn::make('doc_author')
@@ -150,17 +150,16 @@ class FileResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+//
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-//                    ->query(fn(Builder $query): Builder => $query->where('treated', false)
-//                    )
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
