@@ -68,6 +68,7 @@ class FiledispatchResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('date_dispatched')
                             ->label('Dispatched Date')
+                            ->default(now())
                             ->required()
                             ->native(false),
                         Forms\Components\TextInput::make('dispatch_phone')

@@ -11,6 +11,7 @@ use App\Models\User;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\Filter;
@@ -45,9 +46,9 @@ class FileResource extends Resource
         return $form
             ->schema([
 
-                Forms\Components\FieldSet::make('Primary Details')
+                Forms\Components\FieldSet::make('Primary Information')
                     ->schema(components: [
-                        Forms\Components\Textarea::make('Description')
+                        Forms\Components\Textarea::make('description')
                             ->autofocus()
                             ->required()
                             ->maxLength(65535)
@@ -55,19 +56,20 @@ class FileResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\Select::make('category_id')
                             ->label('Category')
+                            ->required()
                             ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
                             ->preload()
                             ->searchable()
+                            ->reactive()
                             ->native(false)
-                            ->label('Document Category'),
-//                            ->reactive(),
-//                            ->afterStateUpdated(fn (Callable $set) => $set ('category_name', 'name')),
-//                        TextInput::make('category_name')
-//                            ->password()
-//                            ->hidden(fn (Closure $get) => $get('category_id')),
-                        Forms\Components\Hidden::make('category_name')
-                            ->default('category.name'),
+                            ->label('Document Category')
+//                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('category_name', Str::title($state))),
+                            ->afterStateUpdated(fn ($state, Forms\Set $set) =>
+                                $set('category_name', Category::find($state)->name)),
 
+                        Forms\Components\Hidden::make('category_name')
+                            ->live()
+                            ->dehydrated(),
 
                         Forms\Components\Select::make('contractor_id')
                             ->relationship('contractor', 'name')
@@ -84,13 +86,15 @@ class FileResource extends Resource
                             ->label('Received By')
                             ->options(User::where('is_admin', 0)->pluck('name', 'id'))
                             ->preload()
+                            ->required()
                             ->searchable(),
                         Forms\Components\DatePicker::make('date_received')
                             ->native(false)
+                            ->default(now())
                             ->required(),
                     ])->columns(3),
 
-                Forms\Components\Fieldset::make('Other Details')
+                Forms\Components\Fieldset::make('Additional Information')
                     ->schema([
                         Forms\Components\TextInput::make('doc_author')
                             ->label('Document Author')

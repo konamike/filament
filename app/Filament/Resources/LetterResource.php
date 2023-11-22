@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Letter;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -38,6 +39,57 @@ class LetterResource extends Resource
     {
         return $form
             ->schema([
+
+                Wizard::make([
+                    Wizard\Step::make('Letter Details')
+                        ->schema([
+                            Forms\Components\Textarea::make('description')
+                                ->required()
+                                ->label('File Description')
+                                ->maxLength(65535)
+                                ->columnSpanFull(),
+                            Forms\Components\Select::make('contractor_id')
+                                ->label('Mail Source')
+                                ->relationship('contractor', 'name')
+                                ->required()
+                                ->default(1),
+                            Forms\Components\Select::make('category_id')
+                                ->label('Category')
+                                ->searchable()
+                                ->options(Category::where('document_type', 'LETTER')->pluck('name', 'id'))
+                                ->preload()
+                                ->label('Document Category')
+                                ->reactive(),
+
+                            Forms\Components\Select::make('received_by')
+                                ->label('Received By')
+                                ->options(User::where('is_admin', 0)->pluck('name', 'id'))
+                                ->preload()
+                                ->searchable(),
+                            Forms\Components\DatePicker::make('date_received')
+                                ->native(false)
+                                ->required(),
+                            Forms\Components\TextInput::make('doc_author')
+                                ->label('Document Author')
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('file_number')
+                                ->maxLength(255),
+                        ])->columns(3),
+
+                    Wizard\Step::make('Additional Details')
+                        ->schema([
+                            Forms\Components\TextInput::make('amount')
+                                ->numeric(),
+                            Forms\Components\TextInput::make('phone')
+                                ->label('Phone Number')
+                                ->minLength(11)
+                                ->maxLength(11),
+                            Forms\Components\Textarea::make('remarks')
+                                ->maxLength(65535)
+                                ->columnSpanFull(),
+                        ])->columns(2),
+                ])->columnSpanFull(),
+
                 Forms\Components\Fieldset::make('MAIN DETAILS')
                         ->schema([
                             Forms\Components\Textarea::make('description')

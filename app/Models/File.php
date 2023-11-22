@@ -18,6 +18,7 @@ class File extends Model
         'contractor_id',
         'file_number',
         'category_id',
+        'category_name',
         'received_by',
         'date_received',
         'document_author',
