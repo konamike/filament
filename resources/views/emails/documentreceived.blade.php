@@ -1,13 +1,17 @@
 <x-mail::message>
-    # From the Office of the MD/CEO of the NDDC
-    Your document:
-    {{$message}}
-    has been received.
+# From the Office of the MD/CEO of the NDDC
+<b>Your document:
 
-    <x-mail::button :url="'http://www.nddc.gov.ng'">
-        Visit the NDDC Website
-    </x-mail::button>
+<x-mail::panel>
+{{$message}}
+</x-mail::panel>
 
-    Thank you,
-    {{ config('app.name') }}
+<b>has been received.
+
+<x-mail::button :url="'http://www.nddc.gov.ng'" color="success">
+Visit the NDDC Website
+</x-mail::button>
+
+Thank you, <br>
+{{ config('app.name') }}
 </x-mail::message>

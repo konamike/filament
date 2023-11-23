@@ -52,7 +52,10 @@ class FiletreatResource extends Resource
                     ->inline(true)
                     ->required(),
                 Forms\Components\DatePicker::make('date_treated')
+                    ->label('Date Treated')
+                    ->date()
                     ->native(false)
+                    ->default(now())
                     ->required(),
                 Forms\Components\Textarea::make('treated_notes')
                     ->label('Note for MD/CEO')
