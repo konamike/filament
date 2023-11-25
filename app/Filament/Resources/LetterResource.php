@@ -16,6 +16,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Tabs;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
 
 class LetterResource extends Resource
 {
@@ -27,7 +29,8 @@ class LetterResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+//        return static::getModel()::count();
+        return Letter::where('treated', 'false')->count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
@@ -35,13 +38,20 @@ class LetterResource extends Resource
         return 'success';
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return static::getModel()::query()
+            ->where('treated', false);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-
                 Wizard::make([
-                    Wizard\Step::make('Letter Details')
+                    Wizard\Step::make('PRIMARY INFORMATION')
+                        ->description('Primary Data')
+                        ->icon('heroicon-m-academic-cap')
                         ->schema([
                             Forms\Components\Textarea::make('description')
                                 ->required()
@@ -60,14 +70,14 @@ class LetterResource extends Resource
                                 ->preload()
                                 ->label('Document Category')
                                 ->reactive(),
-
                             Forms\Components\Select::make('received_by')
                                 ->label('Received By')
-                                ->options(User::where('is_admin', 0)->pluck('name', 'id'))
-                                ->preload()
-                                ->searchable(),
+                                ->required()
+                                ->options( User::where('is_admin', 0)->pluck('name', 'id'))
+                                ->preload(),
                             Forms\Components\DatePicker::make('date_received')
                                 ->native(false)
+                                ->default(now())
                                 ->required(),
                             Forms\Components\TextInput::make('doc_author')
                                 ->label('Document Author')
@@ -76,7 +86,9 @@ class LetterResource extends Resource
                                 ->maxLength(255),
                         ])->columns(3),
 
-                    Wizard\Step::make('Additional Details')
+                    Wizard\Step::make('ADDITIONAL DETAILS')
+                        ->description('Additional Details ')
+                        ->icon('heroicon-m-building-office-2')
                         ->schema([
                             Forms\Components\TextInput::make('amount')
                                 ->numeric(),
@@ -84,114 +96,35 @@ class LetterResource extends Resource
                                 ->label('Phone Number')
                                 ->minLength(11)
                                 ->maxLength(11),
+                            Forms\Components\TextInput::make('email')
+                                ->label('Email'),
                             Forms\Components\Textarea::make('remarks')
                                 ->maxLength(65535)
                                 ->columnSpanFull(),
-                        ])->columns(2),
-                ])->columnSpanFull(),
+                        ])->columns(3),
 
-                Forms\Components\Fieldset::make('MAIN DETAILS')
+                    Wizard\Step::make('DOCUMENT RETRIEVALS')
+                        ->description('Retrieval Data')
+                        ->icon('heroicon-m-banknotes')
                         ->schema([
-                            Forms\Components\Textarea::make('description')
-                                ->required()
-                                ->label('File Description')
-                                ->maxLength(65535)
-                                ->columnSpanFull(),
-                            Forms\Components\Select::make('contractor_id')
-                                ->label('Mail Source')
-                                ->relationship('contractor', 'name')
-                                ->required()
-                                ->default(1),
-                            Forms\Components\Select::make('category_id')
-                                ->label('Category')
-                                ->searchable()
-                                ->options(Category::where('document_type', 'LETTER')->pluck('name', 'id'))
-                                ->preload()
-                                ->label('Document Category')
-                                ->reactive(),
-                            Forms\Components\Select::make('received_by')
-                                ->label('Received By')
-                                ->options(User::where('is_admin', 0)->pluck('name', 'id'))
-                                ->preload()
-                                ->searchable(),
-                            Forms\Components\DatePicker::make('date_received')
+                            Forms\Components\TextInput::make('hand_carried')
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('retrieved_by')
+                                ->maxLength(255),
+                            Forms\Components\DatePicker::make('date_retrieved')
                                 ->native(false)
-                                ->required(),
-                            Forms\Components\TextInput::make('doc_author')
-                                ->label('Document Author')
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('file_number')
-                                ->maxLength(255),
-                            ])->columns(3),
-
-                Forms\Components\Fieldset::make('OTHER DETAILS')
-                    ->schema([
-                        Forms\Components\TextInput::make('amount')
-                            ->numeric(),
-                        Forms\Components\TextInput::make('phone')
-                            ->label('Phone Number')
-                            ->minLength(11)
-                            ->maxLength(11),
-                        Forms\Components\Textarea::make('remarks')
-                            ->maxLength(65535)
-                            ->columnSpanFull(),
-
-
-                        ]),
-
-                Tabs::make('Label')
-                    ->tabs([
-                        Tabs\Tab::make('Document Retrieval')
-                            ->icon('heroicon-s-wallet')
-                            ->schema([
-                                Forms\Components\TextInput::make('hand_carried')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('retrieved_by')
-                                    ->maxLength(255),
-                                Forms\Components\DatePicker::make('date_retrieved')
-                                ->native(false),
-                                Forms\Components\Toggle::make('treated')
-                                    ->offIcon('heroicon-m-no-symbol')
-                                    ->offColor('danger')
-                                    ->onIcon('heroicon-m-check-badge')
-                                    ->inline(false)
-                                    ->required(),
-                            ])->columns(4),
-                        Tabs\Tab::make('Document Review')
-                            ->icon('heroicon-s-circle-stack')
-                            ->schema([
-                                Forms\Components\TextInput::make('treated_by')
-                                    ->numeric(),
-                                Forms\Components\DatePicker::make('date_treated'),
-                            ])
-                            ->disabled('edit')
-                            ->columns(2),
-                        Tabs\Tab::make('Document Dispatch')
-                            ->icon('heroicon-s-bell')
-                            ->schema([
-                                Forms\Components\DatePicker::make('date_dispatched')
-                                ->native(false),
-                                Forms\Components\TextInput::make('sent_from')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('sent_to')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('dispatch_phone'),
-                                Forms\Components\TextInput::make('dispatch_email')
-                                    ->email(),
-                                Forms\Components\TextInput::make('dispatched_by')
-                                    ->maxLength(255),
-                                Forms\Components\Toggle::make('dispatched')
-                                    ->offIcon('heroicon-m-no-symbol')
-                                    ->offColor('danger')
-                                    ->onIcon('heroicon-m-check-badge')
-                                    ->inline(true),
-                            ])
-                            ->disabled('edit')
-                            ->columns(3),
-                    ])->columnSpanFull()
-                    ->contained(true)
-                    ->visibleOn(['view', 'edit']),
-
+                                ->default(now()),
+                        ])->columns(2)->visibleOn(['edit', 'view']),
+                ])->columnSpanFull()
+/*                    ->submitAction(new HtmlString(Blade::render(<<<BLADE
+                            <x-filament::button
+                                type="submit"
+                                size="sm"
+                            >
+                                Submit
+                            </x-filament::button>
+                        BLADE
+                    ))),*/
             ]);
     }
 
@@ -204,26 +137,28 @@ class LetterResource extends Resource
                     ->wrap()
                     ->label('Letter Description')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('date_received')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('doc_author')
                     ->label('Document Author')
                     ->wrap()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date_received')
-                    ->date()
-                    ->sortable(),
+
                 Tables\Columns\IconColumn::make('treated')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('date_treated')
-                    ->date(),
-                Tables\Columns\IconColumn::make('dispatched')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('date_dispatched')
-                    ->date()
-                    ->sortable(),
+//                Tables\Columns\TextColumn::make('date_treated')
+//                    ->date(),
+//                Tables\Columns\IconColumn::make('dispatched')
+//                    ->boolean(),
+//                Tables\Columns\TextColumn::make('date_dispatched')
+//                    ->date()
+//                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
+                    ->date(format: 'dS M. Y h:i A')
+//                    ->sortable()
+                        ->label('Created At')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -259,4 +194,5 @@ class LetterResource extends Resource
             'edit' => Pages\EditLetter::route('/{record}/edit'),
         ];
     }
+
 }

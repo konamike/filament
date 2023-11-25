@@ -9,11 +9,15 @@ use Filament\Resources\Pages\ListRecords;
 class ListCategories extends ListRecords
 {
     protected static string $resource = CategoryResource::class;
+    protected static ?string $title = 'All Categories';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Create Category')
+                ->color('warning')
+                ->icon('heroicon-o-circle-stack'),
         ];
     }
 }

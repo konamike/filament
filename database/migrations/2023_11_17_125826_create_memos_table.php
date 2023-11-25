@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('amount',15, 2)->nullable();
             $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->unsignedBigInteger('received_by');
             $table->date('date_received');
             $table->string('hand_carried')->nullable();

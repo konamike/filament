@@ -13,5 +13,5 @@ Visit the NDDC Website
 </x-mail::button>
 
 Thank you, <br>
-{{ config('app.name') }}
+MD/CEO Mail Management System
 </x-mail::message>

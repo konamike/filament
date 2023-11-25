@@ -5,6 +5,7 @@ namespace App\Filament\Resources\FileResource\Pages;
 use App\Filament\Resources\FileResource;
 use App\Mail\DocumentReceivedMail;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 class CreateFile extends CreateRecord
 {
     protected static string $resource = FileResource::class;
+    protected static ?string $title = 'New File';
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -21,6 +23,15 @@ class CreateFile extends CreateRecord
         $data['category_name'] = 'category.name';
         return $data;
     }
+
+    protected function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+            ->label('Submit')
+            ->submit('create')
+            ->keyBindings(['mod+s']);
+    }
+
 
     protected static bool $canCreateAnother = false;
     protected function getCreatedNotification(): ?Notification
@@ -45,7 +56,11 @@ class CreateFile extends CreateRecord
         $storedDataEmail = $this->record->email;
         $storeDataID = $this->record->id;
         $storedDataDescription = $this->record->description;
-        Mail::to($storedDataEmail)->send(new DocumentReceivedMail($storedDataDescription));
+        if (!is_null($storedDataEmail ))
+        {
+            Mail::to($storedDataEmail)->send(new DocumentReceivedMail($storedDataDescription));
+        }
+
     }
 
 }

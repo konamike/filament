@@ -7,13 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Category;
 use App\Models\Contractor;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
 
 class File extends Model
 {
     use HasFactory;
     use LogsActivity;
+    use HasRoles;
     protected $fillable = [
         'contractor_id',
         'file_number',
@@ -21,11 +24,12 @@ class File extends Model
         'category_name',
         'received_by',
         'date_received',
-        'document_author',
-        'document_sender',
+        'doc_author',
+        'doc_sender',
         'amount',
         'description',
         'email',
+        'phone',
         'hand_carried',
         'retrieved_by',
         'date_retrieved',

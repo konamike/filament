@@ -17,6 +17,7 @@ class Letter extends Model
         'description',
         'amount',
         'phone',
+        'email',
         'received_by',
         'date_received',
         'hand_carried',

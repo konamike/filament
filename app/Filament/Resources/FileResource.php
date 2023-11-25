@@ -10,6 +10,7 @@ use App\Models\Contractor;
 use App\Models\User;
 use Closure;
 use Filament\Forms;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\PseudoTypes\TraitString;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class FileResource extends Resource
@@ -33,7 +35,7 @@ class FileResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::query()->where('treated', false)->count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
@@ -41,86 +43,179 @@ class FileResource extends Resource
         return 'success';
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return static::getModel()::query()
+            ->where('treated', false);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Wizard::make([
+                    Wizard\Step::make('PRIMARY INFORMATION')
+                        ->description('Primary Data')
+                        ->icon('heroicon-m-academic-cap')
+                        ->schema([
+                            Forms\Components\Textarea::make('description')
+                                ->required()
+                                ->label('File Description')
+                                ->maxLength(65535)
+                                ->columnSpanFull(),
+                            Forms\Components\Select::make('category_id')
+                                ->label('Category')
+                                ->searchable()
+                                ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
+                                ->preload()
+                                ->label('Document Category')
+                                ->reactive(),
+                            Forms\Components\Select::make('contractor_id')
+                                ->label('Mail Source')
+                                ->relationship('contractor', 'name')
+                                ->required()
+                                ->default(1),
+                            Forms\Components\TextInput::make('file_number')
+                                ->maxLength(255),
 
-                Forms\Components\FieldSet::make('Primary Information')
-                    ->schema(components: [
-                        Forms\Components\Textarea::make('description')
-                            ->autofocus()
-                            ->required()
-                            ->maxLength(65535)
-                            ->label('File Description')
-                            ->columnSpanFull(),
-                        Forms\Components\Select::make('category_id')
-                            ->label('Category')
-                            ->required()
-                            ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
-                            ->preload()
-                            ->searchable()
-                            ->reactive()
-                            ->native(false)
-                            ->label('Document Category')
-//                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('category_name', Str::title($state))),
-                            ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-                                $set('category_name', Category::find($state)->name)),
+                            Forms\Components\Select::make('received_by')
+                                ->label('Received By')
+                                ->required()
+                                ->options(User::where('is_admin', 0)->pluck('name', 'id'))
+                                ->preload(),
+                            Forms\Components\DatePicker::make('date_received')
+                                ->native(false)
+                                ->default(now())
+                                ->required(),
+                            Forms\Components\TextInput::make('doc_author')
+                                ->label('Document Author')
+                                ->maxLength(255),
 
-                        Forms\Components\Hidden::make('category_name')
-                            ->live()
-                            ->dehydrated(),
+                        ])->columns(3),
 
-                        Forms\Components\Select::make('contractor_id')
-                            ->relationship('contractor', 'name')
-                            ->native(false)
-                            ->preload()
-                            ->searchable()
-                            ->default(1),
-                        Forms\Components\TextInput::make('file_number')
-//                            ->formatStateUsing(fn (string $state): string => strtoupper($state))
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('amount')
-                            ->numeric(),
-                        Forms\Components\Select::make('received_by')
-                            ->label('Received By')
-                            ->options(User::where('is_admin', 0)->pluck('name', 'id'))
-                            ->preload()
-                            ->required()
-                            ->searchable(),
-                        Forms\Components\DatePicker::make('date_received')
-                            ->native(false)
-                            ->default(now())
-                            ->required(),
-                    ])->columns(3),
+                    Wizard\Step::make('ADDITIONAL DETAILS')
+                        ->description('Additional Details ')
+                        ->icon('heroicon-m-building-office-2')
+                        ->schema([
+                            Forms\Components\TextInput::make('doc_sender')
+                                ->label('Document Sender')
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('amount')
+                                ->numeric(),
+                            Forms\Components\TextInput::make('phone')
+                                ->label('Phone Number')
+                                ->mask('999-9999-9999')
+                                ->placeholder('080-0000-0000'),
+//                                ->minLength(11)
+//                                ->maxLength(11),
+                            Forms\Components\TextInput::make('email')
+                                ->label('Email')
+                                ->placeholder('Pls enter email for receipt of document info'),
+                            Forms\Components\Textarea::make('remarks')
+                                ->maxLength(65535)
+                                ->columnSpanFull(),
+                        ])->columns(2),
 
-                Forms\Components\Fieldset::make('Additional Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('doc_author')
-                            ->label('Document Author')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('doc_sender')
-                            ->label('Document Sender')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
-                            ->email(),
-                        Forms\Components\Textarea::make('remarks')
-                            ->maxLength(65535)
-                            ->columnSpanFull(),
-                    ])->columns(3),
-                Forms\Components\Fieldset::make('Document Retrievals')
-                    ->schema([
-                        Forms\Components\TextInput::make('hand_carried')
-                            ->maxLength(255),
-//                                ->visibleOn(['view', 'edit']),
-                        Forms\Components\TextInput::make('retrieved_by')
-                            ->maxLength(255),
-//                                ->visibleOn(['view', 'edit']),
-                        Forms\Components\DatePicker::make('date_retrieved')
-                            ->native(false),
-//                                ->visibleOn(['view', 'edit']),
-                    ])->visibleOn(['view', 'edit'])
-                    ->columns(3),
+                    Wizard\Step::make('DOCUMENT RETRIEVAL')
+                        ->description('Retrieval Data')
+                        ->icon('heroicon-m-banknotes')
+                        ->schema([
+                            Forms\Components\TextInput::make('hand_carried')
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('retrieved_by')
+                                ->maxLength(255),
+                            Forms\Components\DatePicker::make('date_retrieved')
+                                ->native(false)
+                                ->default(now()),
+                        ])->columns(2)->visibleOn(['edit', 'view']),
+                ])->columnSpanFull(),
+                /*                    ->submitAction(new HtmlString(Blade::render(<<<BLADE
+                                            <x-filament::button
+                                                type="submit"
+                                                size="sm"
+                                            >
+                                                Submit
+                                            </x-filament::button>
+                                        BLADE
+                                    ))),*/
+//            ]);
+
+
+//                Forms\Components\FieldSet::make('Primary Information')
+//                    ->schema(components: [
+//                        Forms\Components\Textarea::make('description')
+//                            ->autofocus()
+//                            ->required()
+//                            ->maxLength(65535)
+//                            ->label('File Description')
+//                            ->columnSpanFull(),
+//                        Forms\Components\Select::make('category_id')
+//                            ->label('Category')
+//                            ->required()
+//                            ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
+//                            ->preload()
+//                            ->searchable()
+//                            ->reactive()
+//                            ->native(false)
+//                            ->label('Document Category')
+////                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('category_name', Str::title($state))),
+//                            ->afterStateUpdated(fn ($state, Forms\Set $set) =>
+//                                $set('category_name', Category::find($state)->name)),
+//
+//                        Forms\Components\Hidden::make('category_name')
+//                            ->live()
+//                            ->dehydrated(),
+//
+//                        Forms\Components\Select::make('contractor_id')
+//                            ->relationship('contractor', 'name')
+//                            ->native(false)
+//                            ->preload()
+//                            ->searchable()
+//                            ->default(1),
+//                        Forms\Components\TextInput::make('file_number')
+////                            ->formatStateUsing(fn (string $state): string => strtoupper($state))
+//                            ->maxLength(100),
+//                        Forms\Components\TextInput::make('amount')
+//                            ->numeric(),
+//                        Forms\Components\Select::make('received_by')
+//                            ->label('Received By')
+//                            ->options(User::where('is_admin', 0)->pluck('name', 'id'))
+//                            ->preload()
+//                            ->required()
+//                            ->searchable(),
+//                        Forms\Components\DatePicker::make('date_received')
+//                            ->native(false)
+//                            ->default(now())
+//                            ->required(),
+//                    ])->columns(3),
+
+//                Forms\Components\Fieldset::make('Additional Information')
+//                    ->schema([
+//                        Forms\Components\TextInput::make('doc_author')
+//                            ->label('Document Author')
+//                            ->maxLength(255),
+//                        Forms\Components\TextInput::make('doc_sender')
+//                            ->label('Document Sender')
+//                            ->maxLength(255),
+//                        Forms\Components\TextInput::make('email')
+//                            ->email(),
+//                        Forms\Components\Textarea::make('remarks')
+//                            ->maxLength(65535)
+//                            ->columnSpanFull(),
+//                    ])->columns(3),
+//                Forms\Components\Fieldset::make('Document Retrievals')
+//                    ->schema([
+//                        Forms\Components\TextInput::make('hand_carried')
+//                            ->maxLength(255),
+////                                ->visibleOn(['view', 'edit']),
+//                        Forms\Components\TextInput::make('retrieved_by')
+//                            ->maxLength(255),
+////                                ->visibleOn(['view', 'edit']),
+//                        Forms\Components\DatePicker::make('date_retrieved')
+//                            ->native(false),
+////                                ->visibleOn(['view', 'edit']),
+//                    ])->visibleOn(['view', 'edit'])
+//                    ->columns(3),
             ]);
     }
 
@@ -140,17 +235,9 @@ class FileResource extends Resource
                     ->searchable(),
                 Tables\Columns\IconColumn::make('treated')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('date_treated')
-                    ->label('Date Treated')
-                    ->date(),
-                Tables\Columns\IconColumn::make('dispatched')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('date_dispatched')
-                    ->label('Date Dispatched')
-                    ->date(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
+                    ->date(format: 'dS M. Y h:i A')
+                    ->label('Created At')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -183,7 +270,7 @@ class FileResource extends Resource
         return [
             'index' => Pages\ListFiles::route('/'),
             'create' => Pages\CreateFile::route('/create'),
-            'view' => Pages\ViewFile::route('/{record}'),
+//            'view' => Pages\ViewFile::route('/{record}'),
             'edit' => Pages\EditFile::route('/{record}/edit'),
         ];
     }

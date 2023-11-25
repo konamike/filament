@@ -73,15 +73,16 @@ class ContractorResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('contact_person')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_phone'),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime('Y-M-d:h:i:sa')
-                    ->sortable(),
+                    ->dateTime('Y-M-d: h:i:sa')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
