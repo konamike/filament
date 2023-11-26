@@ -53,7 +53,7 @@ class CreateMemo extends CreateRecord
         $storedDataDescription = $this->record->description;
         if (!is_null($storedDataEmail ))
         {
-            Mail::to($storedDataEmail)->send(new DocumentReceivedMail($storedDataDescription));
+            Mail::to($storedDataEmail)->later(now()->addMinutes(5),new DocumentReceivedMail($storedDataDescription));
         }
     }
 

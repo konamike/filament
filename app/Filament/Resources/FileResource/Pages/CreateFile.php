@@ -52,13 +52,14 @@ class CreateFile extends CreateRecord
     protected function afterCreate(): void
     {
         // Runs after the form fields are saved to the database.
+//        $delay = now()->addMinutes(10);
         $name = Auth::user()->name;
         $storedDataEmail = $this->record->email;
         $storeDataID = $this->record->id;
         $storedDataDescription = $this->record->description;
         if (!is_null($storedDataEmail ))
         {
-            Mail::to($storedDataEmail)->send(new DocumentReceivedMail($storedDataDescription));
+            Mail::to($storedDataEmail) ->later(now()->addMinutes(10), new DocumentReceivedMail($storedDataDescription));
         }
 
     }

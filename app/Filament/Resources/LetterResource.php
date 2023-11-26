@@ -93,9 +93,7 @@ class LetterResource extends Resource
                             Forms\Components\TextInput::make('amount')
                                 ->numeric(),
                             Forms\Components\TextInput::make('phone')
-                                ->label('Phone Number')
-                                ->minLength(11)
-                                ->maxLength(11),
+                                ->label('Phone Number'),
                             Forms\Components\TextInput::make('email')
                                 ->label('Email'),
                             Forms\Components\Textarea::make('remarks')
