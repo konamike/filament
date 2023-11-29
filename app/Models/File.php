@@ -78,9 +78,7 @@ class File extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['description', 'contractor_id', 'amount', 'treated', 'treated_by', 'dispatched', 'dispatch_note'])
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->logFillable();
     }
 }
 

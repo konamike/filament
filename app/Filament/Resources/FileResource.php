@@ -141,81 +141,6 @@ class FileResource extends Resource
 //            ]);
 
 
-//                Forms\Components\FieldSet::make('Primary Information')
-//                    ->schema(components: [
-//                        Forms\Components\Textarea::make('description')
-//                            ->autofocus()
-//                            ->required()
-//                            ->maxLength(65535)
-//                            ->label('File Description')
-//                            ->columnSpanFull(),
-//                        Forms\Components\Select::make('category_id')
-//                            ->label('Category')
-//                            ->required()
-//                            ->options(Category::where('document_type', 'FILE')->pluck('name', 'id'))
-//                            ->preload()
-//                            ->searchable()
-//                            ->reactive()
-//                            ->native(false)
-//                            ->label('Document Category')
-////                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('category_name', Str::title($state))),
-//                            ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-//                                $set('category_name', Category::find($state)->name)),
-//
-//                        Forms\Components\Hidden::make('category_name')
-//                            ->live()
-//                            ->dehydrated(),
-//
-//                        Forms\Components\Select::make('contractor_id')
-//                            ->relationship('contractor', 'name')
-//                            ->native(false)
-//                            ->preload()
-//                            ->searchable()
-//                            ->default(1),
-//                        Forms\Components\TextInput::make('file_number')
-////                            ->formatStateUsing(fn (string $state): string => strtoupper($state))
-//                            ->maxLength(100),
-//                        Forms\Components\TextInput::make('amount')
-//                            ->numeric(),
-//                        Forms\Components\Select::make('received_by')
-//                            ->label('Received By')
-//                            ->options(User::where('is_admin', 0)->pluck('name', 'id'))
-//                            ->preload()
-//                            ->required()
-//                            ->searchable(),
-//                        Forms\Components\DatePicker::make('date_received')
-//                            ->native(false)
-//                            ->default(now())
-//                            ->required(),
-//                    ])->columns(3),
-
-//                Forms\Components\Fieldset::make('Additional Information')
-//                    ->schema([
-//                        Forms\Components\TextInput::make('doc_author')
-//                            ->label('Document Author')
-//                            ->maxLength(255),
-//                        Forms\Components\TextInput::make('doc_sender')
-//                            ->label('Document Sender')
-//                            ->maxLength(255),
-//                        Forms\Components\TextInput::make('email')
-//                            ->email(),
-//                        Forms\Components\Textarea::make('remarks')
-//                            ->maxLength(65535)
-//                            ->columnSpanFull(),
-//                    ])->columns(3),
-//                Forms\Components\Fieldset::make('Document Retrievals')
-//                    ->schema([
-//                        Forms\Components\TextInput::make('hand_carried')
-//                            ->maxLength(255),
-////                                ->visibleOn(['view', 'edit']),
-//                        Forms\Components\TextInput::make('retrieved_by')
-//                            ->maxLength(255),
-////                                ->visibleOn(['view', 'edit']),
-//                        Forms\Components\DatePicker::make('date_retrieved')
-//                            ->native(false),
-////                                ->visibleOn(['view', 'edit']),
-//                    ])->visibleOn(['view', 'edit'])
-//                    ->columns(3),
             ]);
     }
 
@@ -223,13 +148,12 @@ class FileResource extends Resource
     {
         return $table
             ->columns([
-
                 Tables\Columns\TextColumn::make('description')
                     ->searchable()
                     ->label('Description')
                     ->wrap(),
                 Tables\Columns\TextColumn::make('date_received')
-                    ->date(),
+                    ->since(),
                 Tables\Columns\TextColumn::make('doc_author')
                     ->label('Document Author')
                     ->searchable(),
