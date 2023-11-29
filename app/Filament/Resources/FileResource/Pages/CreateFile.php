@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FileResource\Pages;
 
+use App\Filament\Loggers\FileLogger;
 use App\Filament\Resources\FileResource;
 use App\Mail\DocumentReceivedMail;
 use Filament\Actions;
@@ -10,9 +11,11 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Noxo\FilamentActivityLog\Extensions\LogCreateRecord;
 
 class CreateFile extends CreateRecord
 {
+    use LogCreateRecord;
     protected static string $resource = FileResource::class;
     protected static ?string $title = 'New File';
 

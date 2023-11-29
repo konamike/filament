@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\FileResource\Pages;
 
+use App\Filament\Loggers\FileLogger;
 use App\Filament\Resources\FiledispatchResource;
 use App\Filament\Resources\FileResource;
+use App\Models\File;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -11,10 +13,12 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Filament\Notifications\Actions\Action;
+use Noxo\FilamentActivityLog\Extensions\LogEditRecord;
 use \Spatie\Permission\Traits\HasRoles;
 
 class EditFile extends EditRecord
 {
+    use LogEditRecord;
     protected static string $resource = FileResource::class;
 
     protected function getHeaderActions(): array
@@ -78,8 +82,8 @@ class EditFile extends EditRecord
                     Action::make('View File')
                         ->url(FiledispatchResource::getUrl('view', ['record' => $this->record]))
                         ->button(),
-                ])
-                ->sendToDatabase(User::whereIn('role', ['ADMIN', 'USER', 'MD'])->get());
+                ]);
+//                ->sendToDatabase(User::whereIn('role', ['ADMIN', 'USER', 'MD'])->get());
     }
 
 }

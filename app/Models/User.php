@@ -81,11 +81,18 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasAnyRole('super-admin', 'admin', 'md','cos', 'hsd', 'engineer', 'user');
     }
 
-    public function getActivitylogOptions(): LogOptions
+/*    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['name', 'email', 'is_admin',])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }*/
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
+
 }
